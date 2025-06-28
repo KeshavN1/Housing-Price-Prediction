@@ -1,3 +1,359 @@
-<h1>
-    This is testing purpose !!
-</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>California Housing Price Prediction</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .glass-card {
+      width: 95%;
+      max-width: 850px;
+      padding: 35px 25px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #fff;
+      animation: slideIn 0.6s ease-in-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .info-icon {
+      font-size: 22px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      line-height: 0;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+
+    .input-field {
+      flex: 1 1 45%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    input[type="text"] {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 15px;
+    }
+
+    input[type="text"]::placeholder {
+      color: #ddd;
+    }
+
+    input[type="text"]:focus {
+      background: rgba(255, 255, 255, 0.35);
+      outline: none;
+      box-shadow: 0 0 5px #a29bfe, 0 0 10px #6c5ce7;
+    }
+
+    .tooltip {
+      font-size: 11px;
+      color: #dcdde1;
+      margin-top: 4px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      background: linear-gradient(to right, #6c5ce7, #a29bfe);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn-reset {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .note {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      font-style: italic;
+      color: #dcdde1;
+    }
+
+    footer {
+      margin-top: 25px;
+      text-align: center;
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-content {
+      background: white;
+      color: #333;
+      margin: 10% auto;
+      padding: 30px 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 450px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 500;
+      position: relative;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 22px;
+      color: #6c5ce7;
+    }
+
+    .modal-content ul {
+      padding-left: 20px;
+      margin: 0;
+      color: #555;
+      font-weight: 400;
+      font-size: 15px;
+    }
+
+    .modal-content ul li {
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .close {
+      color: #aaa;
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      font-size: 28px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .close:hover {
+      color: #6c5ce7;
+    }
+
+    @media (max-width: 600px) {
+      form {
+        flex-direction: column;
+      }
+
+      .input-field {
+        width: 100%;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glass-card">
+    <div class="header">
+      <h1>🏡 CA Housing Price Predictor</h1>
+      <button class="info-icon" title="Feature Info" onclick="showFeatureInfo()">📋</button>
+    </div>
+
+    <form id="predictionForm">
+      <div class="input-field">
+        <input type="text" name="MedInc" placeholder="Median Income" required />
+        <div class="tooltip">Avg income in area</div>
+      </div>
+      <div class="input-field">
+        <input type="text" name="HouseAge" placeholder="House Age" required />
+        <div class="tooltip">Avg age of houses</div>
+      </div>
+      <div class="input-field">
+        <input type="text" name="AveRooms" placeholder="Average Rooms" required />
+        <div class="tooltip">Avg rooms per house</div>
+      </div>
+      <div class="input-field">
+        <input type="text" name="Latitude" placeholder="Latitude" required />
+        <div class="tooltip">Geo coordinate</div>
+      </div>
+      <div class="input-field">
+        <input type="text" name="Households" placeholder="Households" required />
+        <div class="tooltip">Total households</div>
+      </div>
+      <div class="input-field">
+        <input type="text" name="Rooms_per_household" placeholder="Rooms / Household" required />
+        <div class="tooltip">Rooms divided by household</div>
+      </div>
+      <div class="input-field">
+        <input type="text" name="Bedrooms_per_room" placeholder="Bedrooms / Room" required />
+        <div class="tooltip">Bedrooms per room ratio</div>
+      </div>
+      <div class="input-field">
+        <input type="text" name="Population_per_household" placeholder="Pop / Household" required />
+        <div class="tooltip">People per household</div>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="btn">🔮 Predict</button>
+        <button type="reset" class="btn btn-reset">↺ Reset</button>
+      </div>
+    </form>
+
+    <div class="note">
+      Output is in <strong>$100,000s</strong>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    Built by Keshav Naunyal • v1.0 • Powered by Flask & ML 🌐
+  </footer>
+
+  <!-- Result Modal -->
+  <div id="resultModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('resultModal')">&times;</span>
+      <div id="resultText">Predicted Value: $XX,XXX</div>
+    </div>
+  </div>
+
+  <!-- Feature Info Modal -->
+  <div id="featureModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('featureModal')">&times;</span>
+      <h3>📌 Feature Info</h3>
+      <ul>
+        <li><strong>MedInc</strong>: Median income in the block</li>
+        <li><strong>HouseAge</strong>: Avg house age in years</li>
+        <li><strong>AveRooms</strong>: Avg rooms per house</li>
+        <li><strong>Latitude</strong>: Latitude location</li>
+        <li><strong>Households</strong>: Total number of households</li>
+        <li><strong>Rooms/Household</strong>: Ratio of rooms per household</li>
+        <li><strong>Bedrooms/Room</strong>: Bedroom-to-room ratio</li>
+        <li><strong>Population/Household</strong>: People per household</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('predictionForm');
+    const resultModal = document.getElementById('resultModal');
+    const featureModal = document.getElementById('featureModal');
+    const resultText = document.getElementById('resultText');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const jsonData = {};
+      formData.forEach((value, key) => {
+        jsonData[key] = parseFloat(value);
+      });
+
+      fetch('{{ url_for("predict_api") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: jsonData })
+      })
+      .then(res => res.json())
+      .then(data => {
+        resultText.innerText = `🏠 Estimated House Value: $${(data * 100000).toLocaleString()}`;
+        resultModal.style.display = 'block';
+      })
+      .catch(err => {
+        resultText.innerText = "❌ Error making prediction.";
+        resultModal.style.display = 'block';
+        console.error(err);
+      });
+    });
+
+    // Close modal when clicking outside modal content
+    window.onclick = function(e) {
+      if (e.target === resultModal) closeModal('resultModal');
+      if (e.target === featureModal) closeModal('featureModal');
+    };
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function showFeatureInfo() {
+      featureModal.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
